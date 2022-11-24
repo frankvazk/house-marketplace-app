@@ -1,12 +1,10 @@
 import React from "react";
-import { useNavigate, useLocation, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { ReactComponent as OfferIcon } from "../assets/svg/localOfferIcon.svg";
 import { ReactComponent as ExploreIcon } from "../assets/svg/exploreIcon.svg";
 import { ReactComponent as PersonOutlineIcon } from "../assets/svg/personOutlineIcon.svg";
 
 const NavBar = () => {
-  const navigate = useNavigate();
-
   return (
     <footer className="navbar">
       <nav className="navbarNav">
@@ -32,7 +30,7 @@ const NavBar = () => {
             </NavLink>
           </li>
           <li className="navbarListItem">
-            <NavLink to="/sign-in">
+            <NavLink to="/profile">
               <PersonOutlineIcon
                 className="navbarListIcon"
                 width="36px"

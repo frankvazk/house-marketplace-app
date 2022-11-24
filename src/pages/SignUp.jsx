@@ -8,7 +8,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 
-import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
+import { setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { db } from "../firebase.config";
 
 const SignUp = () => {
