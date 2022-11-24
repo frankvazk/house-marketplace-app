@@ -7,6 +7,8 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+
+import { collection, setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { db } from "../firebase.config";
 
 const SignUp = () => {
@@ -34,12 +36,23 @@ const SignUp = () => {
         email,
         password
       );
+
       const user = userCredential.user; //This value is gonna be store into firebase
 
       updateProfile(auth.currentUser, {
         displayName: name,
       });
 
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+
+      /**
+       * setDoc allow us to create
+       * douments assinging and ID attribute
+       * instead of Firestore create it automatically
+       */
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
       navigate("/");
     } catch (error) {
       console.log(error);
