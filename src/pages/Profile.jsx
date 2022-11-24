@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 const Profile = () => {
   const auth = getAuth();
   const [formData, setFormData] = useState({
-    name: auth.currentUser.displayName,
+    name: auth.currentUser.displayName || "",
     email: auth.currentUser.email,
   });
 
@@ -35,6 +35,7 @@ const Profile = () => {
         });
       }
     } catch (error) {
+      console.log(error);
       toast.error("Could not update profile details");
     }
   };
