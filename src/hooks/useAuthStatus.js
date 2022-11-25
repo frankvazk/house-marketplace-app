@@ -1,20 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export const useAuthStatus = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [checkingStatus, setCheckingSatus] = useState(true);
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setLoggedIn(true);
-      }
+    if (isMounted) {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setLoggedIn(true);
+        }
 
-      setCheckingSatus(false);
-    });
-  });
+        setCheckingSatus(false);
+      });
+    }
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, [isMounted]);
 
   return { loggedIn, checkingStatus };
 };
