@@ -1,10 +1,17 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { db } from "../firebase.config";
+import { v4 as uuidv4 } from "uuid";
 
 const CreateListing = () => {
-  const navigate = useNavigate();
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [formData, setFormData] = useState({
     type: "rent",
@@ -38,11 +45,13 @@ const CreateListing = () => {
     lng,
   } = formData;
 
+  const auth = getAuth();
   const isMounted = useRef(true);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const validateUser = () => {
       if (isMounted) {
-        const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
           if (user) {
             setFormData((prevState) => ({ ...prevState, userRef: user.uid }));
@@ -58,6 +67,7 @@ const CreateListing = () => {
     return () => {
       isMounted.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMounted, navigate]);
 
   const onSubmit = async (e) => {
@@ -102,6 +112,71 @@ const CreateListing = () => {
         geolocation.lng = lng;
         location = address;
       }
+
+      //Store Images in Firebase
+      const storeImage = (image) => {
+        return new Promise((resolve, reject) => {
+          const storage = getStorage();
+          const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
+          const storageRef = ref(storage, `images/${fileName}`);
+          const uploadTask = uploadBytesResumable(storageRef, image);
+
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log("Upload is " + progress + "% done");
+              switch (snapshot.state) {
+                case "paused":
+                  console.log("Upload is paused");
+                  break;
+                case "running":
+                  console.log("Upload is running");
+                  break;
+                default:
+                  break;
+              }
+            },
+            (error) => {
+              reject(error);
+              // A full list of error codes is available at
+              // https://firebase.google.com/docs/storage/web/handle-errors
+              /*switch (error.code) {
+                case "storage/unauthorized":
+                  // User doesn't have permission to access the object
+                  break;
+                case "storage/canceled":
+                  // User canceled the upload
+                  break;
+
+                // ...
+
+                case "storage/unknown":
+                  // Unknown error occurred, inspect error.serverResponse
+                  break;
+              }*/
+            },
+            () => {
+              // Upload completed successfully, now we can get the download URL
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                console.log("File available at", downloadURL);
+                resolve(downloadURL);
+              });
+            }
+          );
+        });
+      };
+
+      const imgUrls = await Promise.all(
+        [...images].map((image) => storeImage(image))
+      ).catch(() => {
+        toast.error("Images not uploaded");
+        return;
+      });
+
+      console.log(imgUrls);
     } catch (error) {
       console.log(error);
       toast.error("The Listing could not been created.");
