@@ -1,6 +1,7 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CreateListing = () => {
   const navigate = useNavigate();
@@ -59,9 +60,52 @@ const CreateListing = () => {
     };
   }, [isMounted, navigate]);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    try {
+      if (offer && discountedPrice > regularPrice) {
+        toast.error(
+          "Discounted price should not be greater than Regular Price"
+        );
+        return;
+      }
+
+      if (images.length > 6) {
+        toast.error("You exceeded max number of images (6)");
+        return;
+      }
+
+      let geolocation = {};
+      let location = null;
+      if (geolocationEnabled) {
+        const q = new URLSearchParams({
+          key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+          address: address,
+        });
+
+        const response = await fetch(
+          `${process.env.REACT_APP_GOOGLE_MAPS_API_URL}?${q}`
+        );
+        const data = await response.json();
+        if (data.status === "OK") {
+          geolocation.lat = data.results[0]?.geometry.location.lat ?? 0;
+          geolocation.lng = data.results[0]?.geometry.location.lng ?? 0;
+          location = data.results[0].formatted_address ?? undefined;
+        }
+
+        if (location === undefined || location === null) {
+          toast.error("Please enter a correct address");
+          return;
+        }
+      } else {
+        geolocation.lat = lat;
+        geolocation.lng = lng;
+        location = address;
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("The Listing could not been created.");
+    }
   };
 
   const onMutate = (e) => {
@@ -70,7 +114,7 @@ const CreateListing = () => {
       boolean = true;
     }
 
-    if (e.target.value == "false") {
+    if (e.target.value === "false") {
       boolean = false;
     }
 
