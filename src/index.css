@@ -324,9 +324,13 @@ button {
   margin-top: 3rem;
 }
 
-.swiper-container {
+.swiper-wrapper {
   min-height: 225px;
   height: 23vw;
+}
+
+.swiper-slide {
+  height: auto !important;
 }
 
 .swiper-pagination-bullet-active {
