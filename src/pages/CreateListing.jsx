@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { db } from "../firebase.config";
 import { v4 as uuidv4 } from "uuid";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const CreateListing = () => {
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
@@ -176,7 +177,22 @@ const CreateListing = () => {
         return;
       });
 
-      console.log(imgUrls);
+      const formDataCopy = {
+        ...formData,
+        imgUrls,
+        location,
+        geolocation,
+        timestamp: serverTimestamp(),
+      };
+
+      //Clean Up Json Object
+      delete formDataCopy.images;
+      delete formDataCopy.address;
+      !formDataCopy.offer && delete formDataCopy.discountedPrice;
+
+      const docRef = await addDoc(collection(db, "listings"), formDataCopy);
+      toast.success("Listing Saved!!!");
+      navigate(`/category/${formDataCopy.type}/${docRef.id}`);
     } catch (error) {
       console.log(error);
       toast.error("The Listing could not been created.");

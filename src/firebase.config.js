@@ -3,7 +3,7 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDGNCNjOvClkwL6aGQE8w58bmvQKgMFB5E",
+  apiKey: process.env.REACT_APP_FIREBASE_CONFIG_API_KEY,
   authDomain: "robust-muse-148116.firebaseapp.com",
   projectId: "robust-muse-148116",
   storageBucket: "robust-muse-148116.appspot.com",

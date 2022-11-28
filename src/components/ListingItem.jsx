@@ -9,7 +9,7 @@ const ListingItem = ({ list, id, onDelete }) => {
     <li className="categoryListing">
       <Link to={`/category/${list.type}/${id}`} className="categoryListingLink">
         <img
-          src={list.imageUrls[0]}
+          src={list.imgUrls[0]}
           alt={list.name}
           className="categoryListingImg"
         />
@@ -25,7 +25,7 @@ const ListingItem = ({ list, id, onDelete }) => {
               : list.regularPrice
                   .toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-            {list.type === "rent" && " /month"}
+            {list.type === "rent" && " / month"}
           </p>
           <div className="categoryListingInfoDiv">
             <img src={bedIcon} alt="bed" />
