@@ -111,7 +111,6 @@ const CreateListing = () => {
       } else {
         geolocation.lat = lat;
         geolocation.lng = lng;
-        location = address;
       }
 
       //Store Images in Firebase
@@ -184,6 +183,9 @@ const CreateListing = () => {
         geolocation,
         timestamp: serverTimestamp(),
       };
+
+      //Set address to location key
+      formDataCopy.location = address;
 
       //Clean Up Json Object
       delete formDataCopy.images;
