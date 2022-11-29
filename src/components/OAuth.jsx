@@ -41,7 +41,7 @@ const OAuth = () => {
 
       navigate("/");
     } catch (error) {
-      toast.error("");
+      toast.error(error.message);
     }
   };
 
