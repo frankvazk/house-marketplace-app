@@ -818,6 +818,11 @@ button {
   margin-top: 5rem;
 }
 
+.createListingButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .offers {
   margin-bottom: 10rem;
 }

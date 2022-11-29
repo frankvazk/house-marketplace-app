@@ -13,6 +13,8 @@ import { v4 as uuidv4 } from "uuid";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const CreateListing = () => {
+  const [saving, setSaving] = useState(false);
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [formData, setFormData] = useState({
     type: "rent",
@@ -73,8 +75,10 @@ const CreateListing = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
       if (offer && discountedPrice > regularPrice) {
+        setSaving(false);
         toast.error(
           "Discounted price should not be greater than Regular Price"
         );
@@ -82,6 +86,7 @@ const CreateListing = () => {
       }
 
       if (images.length > 6) {
+        setSaving(false);
         toast.error("You exceeded max number of images (6)");
         return;
       }
@@ -105,6 +110,7 @@ const CreateListing = () => {
         }
 
         if (location === undefined || location === null) {
+          setSaving(false);
           toast.error("Please enter a correct address");
           return;
         }
@@ -172,6 +178,7 @@ const CreateListing = () => {
       const imgUrls = await Promise.all(
         [...images].map((image) => storeImage(image))
       ).catch(() => {
+        setSaving(false);
         toast.error("Images not uploaded");
         return;
       });
@@ -193,10 +200,11 @@ const CreateListing = () => {
       !formDataCopy.offer && delete formDataCopy.discountedPrice;
 
       const docRef = await addDoc(collection(db, "listings"), formDataCopy);
+      setSaving(false);
       toast.success("Listing Saved!!!");
       navigate(`/category/${formDataCopy.type}/${docRef.id}`);
     } catch (error) {
-      console.log(error);
+      setSaving(false);
       toast.error("The Listing could not been created.");
     }
   };
@@ -453,8 +461,12 @@ const CreateListing = () => {
             multiple
             required={true}
           />
-          <button type="submit" className="primaryButton createListingButton">
-            Create Listing
+          <button
+            type="submit"
+            className="primaryButton createListingButton"
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Create Listing"}
           </button>
         </form>
       </main>
