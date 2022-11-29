@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 const Contact = () => {
   const [message, setMessage] = useState("");
   const [landlord, setLandLord] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const { lordId } = useParams();
   useEffect(() => {
     const getLandLord = async () => {
