@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as DeleteIcon } from "../assets/svg/deleteIcon.svg";
+import { ReactComponent as EditIcon } from "../assets/svg/editIcon.svg";
 import bedIcon from "../assets/svg/bedIcon.svg";
 import bathtubIcon from "../assets/svg/bathtubIcon.svg";
 
-const ListingItem = ({ list, id, onDelete }) => {
+const ListingItem = ({ list, id, onDelete, onEdit }) => {
   return (
     <li className="categoryListing">
       <Link to={`/category/${list.type}/${id}`} className="categoryListingLink">
@@ -45,8 +46,11 @@ const ListingItem = ({ list, id, onDelete }) => {
         <DeleteIcon
           fill="rgb(231,76,60)"
           className="removeIcon"
-          onClick={() => onDelete(id, list.name)}
+          onClick={onDelete}
         />
+      )}
+      {onEdit && (
+        <EditIcon fill="rgb(231,76,60)" className="editIcon" onClick={onEdit} />
       )}
     </li>
   );
@@ -54,6 +58,7 @@ const ListingItem = ({ list, id, onDelete }) => {
 
 ListingItem.defaultProps = {
   onDelete: null,
+  onEdit: null,
 };
 
 export default ListingItem;
