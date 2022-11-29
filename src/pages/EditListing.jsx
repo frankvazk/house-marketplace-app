@@ -21,6 +21,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const EditListing = () => {
   const { listingId } = useParams();
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
   const [listing, setListing] = useState(null);
@@ -294,7 +295,7 @@ const EditListing = () => {
   return (
     <div className="profile">
       <header>
-        <p className="pageHeader">Create a Listing</p>
+        <p className="pageHeader">Edit Listing</p>
       </header>
       <main>
         <form onSubmit={onSubmit}>

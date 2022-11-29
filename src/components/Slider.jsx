@@ -33,6 +33,10 @@ const Slider = () => {
     return <h3>Loading...</h3>;
   }
 
+  if (listings.length === 0) {
+    return <></>;
+  }
+
   return (
     <>
       <p className="exploreHeading">Recomended</p>
