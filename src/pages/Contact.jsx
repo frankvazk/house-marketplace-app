@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 const Contact = () => {
   const [message, setMessage] = useState("");
   const [landlord, setLandLord] = useState("");
-  const searchParams = useSearchParams();
+  // eslint-disable-next-line
+  const [searchParams, setSearchParams] = useSearchParams();
   const { lordId } = useParams();
   useEffect(() => {
     const getLandLord = async () => {
